@@ -1,0 +1,20 @@
+{"level":"info","message":"🔒 PE Mobile SECURE server running on port 8080","timestamp":"2026-03-26T16:13:41.089Z"}
+{"level":"info","message":"🛡️ Security features enabled: JWT auth, rate limiting, audit logging","timestamp":"2026-03-26T16:13:41.090Z"}
+{"level":"info","message":"📱 Access at: https://your-domain.com","timestamp":"2026-03-26T16:13:41.090Z"}
+{"level":"info","message":{"action":"LOGIN_SUCCESS","details":{"name":"Ramsey Kanafani","role":"owner","techId":"2273"},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:14:19.160Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:14:19.160Z"}
+{"level":"info","message":{"action":"API_CALL","details":{"date":"2026-03-26","endpoint":"schedules","techId":"2273"},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:14:19.179Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:14:19.179Z"}
+{"level":"info","message":{"action":"SCHEDULES_RETRIEVED","details":{"jobCount":1},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:14:19.836Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:14:19.836Z"}
+{"level":"info","message":"🔒 PE Mobile SECURE server running on port 8080","timestamp":"2026-03-26T16:19:34.696Z"}
+{"level":"info","message":"🛡️ Security features enabled: JWT auth, rate limiting, audit logging","timestamp":"2026-03-26T16:19:34.697Z"}
+{"level":"info","message":"📱 Access at: https://your-domain.com","timestamp":"2026-03-26T16:19:34.697Z"}
+{"level":"info","message":{"action":"UNAUTHORIZED_ACCESS","details":{"requestedTechId":"test","userTechId":"2273"},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:19:38.808Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:19:38.808Z"}
+{"level":"info","message":{"action":"API_CALL","details":{"date":"2026-03-26","endpoint":"schedules","techId":"2273"},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:19:38.825Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:19:38.825Z"}
+{"level":"info","message":{"action":"SCHEDULES_RETRIEVED","details":{"jobCount":1},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:19:39.631Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:19:39.631Z"}
+{"level":"info","message":{"action":"LOGIN_SUCCESS","details":{"name":"Ramsey Kanafani","role":"owner","techId":"2273"},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:20:12.585Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:20:12.585Z"}
+{"level":"info","message":{"action":"API_CALL","details":{"date":"2026-03-26","endpoint":"schedules","techId":"2273"},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:20:12.602Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:20:12.602Z"}
+{"level":"info","message":{"action":"SCHEDULES_RETRIEVED","details":{"jobCount":1},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:20:13.843Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:20:13.843Z"}
+{"level":"info","message":{"action":"API_CALL","details":{"date":"2026-03-26","endpoint":"schedules","techId":"2273"},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:20:22.301Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:20:22.301Z"}
+{"level":"info","message":{"action":"SCHEDULES_RETRIEVED","details":{"jobCount":1},"ipAddress":"127.0.0.1","timestamp":"2026-03-26T16:20:23.176Z","user":"ramsey","userAgent":"unknown"},"timestamp":"2026-03-26T16:20:23.176Z"}
+{"level":"info","message":"🔒 PE Mobile SECURE server running on port 8080","timestamp":"2026-03-26T22:26:33.722Z"}
+{"level":"info","message":"🛡️ Security features enabled: JWT auth, rate limiting, audit logging","timestamp":"2026-03-26T22:26:33.723Z"}
+{"level":"info","message":"📱 Access at: https://your-domain.com","timestamp":"2026-03-26T22:26:33.723Z"}

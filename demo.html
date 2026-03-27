@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PE Mobile - Job Tracker (Demo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .tech-selector {
+            padding: 1rem;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tech-selector select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .jobs-container {
+            padding: 1rem;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid #2563eb;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-number {
+            font-weight: bold;
+            color: #2563eb;
+            font-size: 1.1rem;
+        }
+
+        .job-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .site-address {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .time-display {
+            font-weight: bold;
+            color: #059669;
+            text-align: center;
+            padding: 0.5rem;
+            background: #f0fdf4;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .timer-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .btn-start {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-stop {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-notes {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-photo {
+            background: #ea580c;
+            color: white;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .notes-area {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .notes-area.active {
+            display: block;
+        }
+
+        .notes-area textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-save {
+            background: #059669;
+            color: white;
+            width: 100%;
+        }
+
+        .photo-upload {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .photo-upload.active {
+            display: block;
+        }
+
+        .photo-upload input[type="file"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            background: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .timer-active {
+            background: #dcfce7;
+            border-left-color: #059669;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PE Mobile - Job Tracker</h1>
+    </div>
+
+    <div class="tech-selector">
+        <select id="techSelect">
+            <option value="5796" selected>Darius Marsh</option>
+        </select>
+    </div>
+
+    <div id="successMessage" class="success-message"></div>
+
+    <div class="jobs-container">
+        <!-- Job 1 - Active Timer -->
+        <div class="job-card timer-active">
+            <div class="job-header">
+                <div class="job-number">Job #595126-637861</div>
+                <div class="job-status pulse">⏱️ ACTIVE</div>
+            </div>
+            
+            <div class="customer-name">Bedford Built</div>
+            <div class="site-address">Site Temp Power - Main Construction Site</div>
+            
+            <div class="job-time">
+                <span>⏰ Scheduled: 06:30 - 12:30 (6h)</span>
+            </div>
+            
+            <div class="time-display" style="color: #059669; font-size: 1.1rem;">
+                ⏱️ 02:34:17 - Timer Running
+            </div>
+            
+            <div class="timer-controls">
+                <button class="btn btn-start" disabled>▶️ Start</button>
+                <button class="btn btn-stop" onclick="stopDemo()">⏹️ Stop</button>
+                <button class="btn btn-notes" onclick="toggleNotes('job1')">📝 Notes</button>
+                <button class="btn btn-photo" onclick="togglePhoto('job1')">📷 Photo</button>
+            </div>
+            
+            <div class="notes-area" id="notes-job1">
+                <textarea placeholder="Enter job notes...">Temp power installation progressing well. Phase 1 complete, working on Phase 2 connections.</textarea>
+                <button class="btn btn-save" onclick="saveDemo()">Save Notes</button>
+            </div>
+            
+            <div class="photo-upload" id="photo-job1">
+                <input type="file" accept="image/*" capture="environment" multiple>
+                <button class="btn btn-save" onclick="uploadDemo()">Upload Photos</button>
+            </div>
+        </div>
+
+        <!-- Job 2 - Ready to start -->
+        <div class="job-card">
+            <div class="job-header">
+                <div class="job-number">Job #595125-637842</div>
+                <div class="job-status">Scheduled</div>
+            </div>
+            
+            <div class="customer-name">CGC QLD</div>
+            <div class="site-address">360 Riding Road Bulimba - Units Construction</div>
+            
+            <div class="job-time">
+                <span>⏰ Scheduled: 12:30 - 13:30 (1h)</span>
+            </div>
+            
+            <div class="time-display">Ready to start</div>
+            
+            <div class="timer-controls">
+                <button class="btn btn-start" onclick="startDemo()">▶️ Start</button>
+                <button class="btn btn-stop" disabled>⏹️ Stop</button>
+                <button class="btn btn-notes" onclick="toggleNotes('job2')">📝 Notes</button>
+                <button class="btn btn-photo" onclick="togglePhoto('job2')">📷 Photo</button>
+            </div>
+            
+            <div class="notes-area" id="notes-job2">
+                <textarea placeholder="Enter job notes..."></textarea>
+                <button class="btn btn-save" onclick="saveDemo()">Save Notes</button>
+            </div>
+            
+            <div class="photo-upload" id="photo-job2">
+                <input type="file" accept="image/*" capture="environment" multiple>
+                <button class="btn btn-save" onclick="uploadDemo()">Upload Photos</button>
+            </div>
+        </div>
+
+        <!-- Job 3 - Completed -->
+        <div class="job-card" style="border-left-color: #059669; opacity: 0.8;">
+            <div class="job-header">
+                <div class="job-number">Job #595126-637857</div>
+                <div class="job-status" style="background: #d1fae5; color: #065f46;">✅ Logged</div>
+            </div>
+            
+            <div class="customer-name">Bedford Built</div>
+            <div class="site-address">Basement 3 - Installation Work</div>
+            
+            <div class="job-time">
+                <span>⏰ Scheduled: 08:30 - 10:30 (2h)</span>
+            </div>
+            
+            <div class="time-display" style="color: #059669;">
+                ✅ Completed - 2.25 hours logged
+            </div>
+            
+            <div class="timer-controls">
+                <button class="btn btn-start" disabled style="opacity: 0.3;">▶️ Start</button>
+                <button class="btn btn-stop" disabled style="opacity: 0.3;">⏹️ Stop</button>
+                <button class="btn btn-notes" onclick="toggleNotes('job3')">📝 Notes</button>
+                <button class="btn btn-photo" onclick="togglePhoto('job3')">📷 Photo</button>
+            </div>
+            
+            <div class="notes-area" id="notes-job3">
+                <textarea placeholder="Enter job notes...">Basement electrical installation complete. All circuits tested and commissioned. Photos uploaded to job file.</textarea>
+                <button class="btn btn-save" onclick="saveDemo()">Save Notes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo functions
+        function startDemo() {
+            showSuccess('Timer started! 🚀');
+        }
+
+        function stopDemo() {
+            showSuccess('Time logged: 2.57 hours ⏱️');
+        }
+
+        function saveDemo() {
+            showSuccess('Notes saved to SimPro! 📝');
+        }
+
+        function uploadDemo() {
+            showSuccess('3 photos uploaded to job! 📷');
+        }
+
+        function toggleNotes(jobId) {
+            const notesArea = document.getElementById(`notes-${jobId}`);
+            notesArea.classList.toggle('active');
+        }
+
+        function togglePhoto(jobId) {
+            const photoArea = document.getElementById(`photo-${jobId}`);
+            photoArea.classList.toggle('active');
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        // Simulate live timer
+        let seconds = 2*3600 + 34*60 + 17; // 2:34:17
+        setInterval(() => {
+            seconds++;
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            
+            const timer = document.querySelector('.timer-active .time-display');
+            if (timer) {
+                timer.textContent = `⏱️ ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} - Timer Running`;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

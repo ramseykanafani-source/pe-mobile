@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PE Mobile - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: #dc2626;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #dc2626;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #fee2e2;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .team-member {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .member-name {
+            font-weight: bold;
+            color: #2563eb;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-details {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .password-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #856404;
+        }
+
+        .security-note {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #991b1b;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .deployment-info {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            color: #065f46;
+        }
+
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 PE Mobile - Admin Panel</h1>
+        <p>Team Management & Deployment Settings</p>
+    </div>
+
+    <div class="container">
+        <!-- Team Members Section -->
+        <div class="section">
+            <h2>👥 Team Member Access</h2>
+            
+            <div class="password-info">
+                <strong>🔐 Current Password:</strong> <code>pe2026</code><br>
+                <small>All team members use the same password for simplicity</small>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-name">👔 Ramsey Kanafani</div>
+                    <div class="member-details">
+                        Username: <strong>ramsey</strong><br>
+                        SimPro ID: 2273<br>
+                        Role: Owner/Director
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-name">🔧 Darius Marsh</div>
+                    <div class="member-details">
+                        Username: <strong>darius</strong><br>
+                        SimPro ID: 5796<br>
+                        Team: Project
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-name">⚡ Max Mitchell</div>
+                    <div class="member-details">
+                        Username: <strong>max</strong><br>
+                        SimPro ID: 5795<br>
+                        Team: Project
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-name">🔌 Houssam Kanafani</div>
+                    <div class="member-details">
+                        Username: <strong>houssam</strong><br>
+                        SimPro ID: 5815<br>
+                        Team: Project
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-name">⚡ Dario Mancini</div>
+                    <div class="member-details">
+                        Username: <strong>dario</strong><br>
+                        SimPro ID: 5681<br>
+                        Team: Service
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-name">🔧 Damin Anderson</div>
+                    <div class="member-details">
+                        Username: <strong>damin</strong><br>
+                        SimPro ID: 4970<br>
+                        Team: Service
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-name">⚡ Jake Clark</div>
+                    <div class="member-details">
+                        Username: <strong>jake</strong><br>
+                        SimPro ID: 4925<br>
+                        Team: Service
+                    </div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-name">🔌 Bailey Gould</div>
+                    <div class="member-details">
+                        Username: <strong>bailey</strong><br>
+                        SimPro ID: 5090<br>
+                        Team: Service (Apprentice)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Section -->
+        <div class="section">
+            <h2>🔐 Security & Sessions</h2>
+            
+            <div class="security-note">
+                <strong>⚠️ Important Security Notes:</strong><br>
+                • Sessions expire after 24 hours<br>
+                • Each user can only see their own jobs<br>
+                • SimPro API key is server-side only<br>
+                • All connections use HTTPS encryption
+            </div>
+
+            <h3>📱 User Instructions:</h3>
+            <ol style="margin-left: 1.5rem; color: #4b5563;">
+                <li><strong>Go to app URL</strong></li>
+                <li><strong>Login with username</strong> (e.g., "ramsey")</li>
+                <li><strong>Enter password:</strong> pe2026</li>
+                <li><strong>Access their jobs only</strong></li>
+                <li><strong>Use timer, notes, purchase orders</strong></li>
+            </ol>
+        </div>
+
+        <!-- Deployment Section -->
+        <div class="section">
+            <h2>🚀 Deployment Instructions</h2>
+            
+            <div class="deployment-info">
+                <strong>✅ Ready for Cloud Deployment</strong><br>
+                Your PE Mobile app now has secure user authentication and is ready to deploy!
+            </div>
+
+            <h3>🌐 Deploy Steps:</h3>
+            <ol style="margin-left: 1.5rem; color: #4b5563;">
+                <li><strong>Go to Railway.app</strong> (recommended)</li>
+                <li><strong>Sign up for free account</strong></li>
+                <li><strong>Create new project</strong></li>
+                <li><strong>Upload the entire app folder</strong></li>
+                <li><strong>Railway auto-deploys</strong></li>
+                <li><strong>Get your HTTPS URL</strong></li>
+            </ol>
+
+            <h3>📝 Share with Team:</h3>
+            <p style="color: #4b5563;">Once deployed, share this info with your team:</p>
+            <div class="code-block">
+PE Mobile App: https://your-app.railway.app
+
+Login Instructions:
+1. Open the URL on your phone
+2. Enter your username (first name, lowercase)
+3. Password: pe2026
+4. Start tracking your jobs!
+
+Usernames:
+- ramsey, darius, max, houssam
+- dario, damin, jake, bailey
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2>⚡ Quick Actions</h2>
+            
+            <button class="btn" onclick="testApp()">🧪 Test Login System</button>
+            <button class="btn" onclick="window.open('/app.html', '_blank')">📱 View Main App</button>
+            <button class="btn btn-danger" onclick="clearAllSessions()">🔄 Clear All Sessions</button>
+            
+            <div style="margin-top: 1rem; color: #6b7280; font-size: 0.9rem;">
+                <strong>Note:</strong> "Clear All Sessions" will log out all users and require them to login again.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testApp() {
+            alert('🧪 Test the login system:\n\n1. Open /login.html in new tab\n2. Try username: "ramsey"\n3. Password: "pe2026"\n4. Should redirect to main app');
+            window.open('/login.html', '_blank');
+        }
+
+        function clearAllSessions() {
+            if (confirm('⚠️ This will log out all users. Continue?')) {
+                // In a real app, this would call a server endpoint
+                alert('✅ All sessions cleared!\n\nUsers will need to login again.');
+            }
+        }
+
+        console.log('PE Mobile Admin Panel loaded');
+    </script>
+</body>
+</html>

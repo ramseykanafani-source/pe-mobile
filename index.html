@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PE Mobile - Job Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .tech-selector {
+            padding: 1rem;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tech-selector select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .jobs-container {
+            padding: 1rem;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid #2563eb;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-number {
+            font-weight: bold;
+            color: #2563eb;
+            font-size: 1.1rem;
+        }
+
+        .job-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .site-address {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .time-display {
+            font-weight: bold;
+            color: #059669;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-start {
+            background: #059669;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-stop {
+            background: #dc2626;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-notes {
+            background: #7c3aed;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-photo {
+            background: #ea580c;
+            color: white;
+            flex: 1;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .notes-area {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .notes-area.active {
+            display: block;
+        }
+
+        .notes-area textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .notes-area .btn-save {
+            background: #059669;
+            color: white;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .photo-upload {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .photo-upload.active {
+            display: block;
+        }
+
+        .photo-upload input[type="file"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .no-jobs {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .timer-controls {
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: calc(50% - 0.25rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PE Mobile - Job Tracker</h1>
+    </div>
+
+    <div class="tech-selector">
+        <select id="techSelect">
+            <option value="">Select Technician</option>
+            <option value="5796">Darius Marsh</option>
+            <option value="5795">Max Mitchell</option>
+            <option value="5815">Houssam Kanafani</option>
+            <option value="5681">Dario Mancini</option>
+            <option value="4970">Damin Anderson</option>
+            <option value="4925">Jake Clark</option>
+            <option value="5090">Bailey Gould</option>
+            <option value="2273">Ramsey Kanafani</option>
+        </select>
+    </div>
+
+    <div id="successMessage" class="success-message"></div>
+    <div id="errorMessage" class="error-message"></div>
+
+    <div class="jobs-container" id="jobsContainer">
+        <div class="loading">
+            Select a technician to view today's jobs
+        </div>
+    </div>
+
+    <script>
+        // SimPro API configuration
+        const API_BASE = 'https://pe.simprocloud.com/api/v1.0/companies/30';
+        const API_KEY = 'f39cd3808a81d8c567250636b6c98f9d88f3928b';
+        
+        // Active timers storage
+        const activeTimers = {};
+        
+        // Tech selection handler
+        document.getElementById('techSelect').addEventListener('change', function() {
+            const techId = this.value;
+            if (techId) {
+                loadTechJobs(techId);
+            } else {
+                showLoading();
+            }
+        });
+
+        // Load jobs for selected technician
+        async function loadTechJobs(techId) {
+            showLoading();
+            
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const response = await fetch(`${API_BASE}/schedules/?Date=${today}&page=1&pageSize=50`, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch schedules');
+                
+                const schedules = await response.json();
+                const techJobs = schedules.filter(schedule => schedule.Staff.ID == techId);
+                
+                displayJobs(techJobs);
+            } catch (error) {
+                showError('Failed to load jobs: ' + error.message);
+            }
+        }
+
+        // Display jobs in the UI
+        function displayJobs(jobs) {
+            const container = document.getElementById('jobsContainer');
+            
+            if (jobs.length === 0) {
+                container.innerHTML = '<div class="no-jobs">No jobs scheduled for today</div>';
+                return;
+            }
+
+            const jobsHTML = jobs.map(job => createJobCard(job)).join('');
+            container.innerHTML = jobsHTML;
+        }
+
+        // Create job card HTML
+        function createJobCard(schedule) {
+            const jobRef = schedule.Reference;
+            const staffName = schedule.Staff.Name;
+            const startTime = schedule.Blocks[0].StartTime;
+            const endTime = schedule.Blocks[0].EndTime;
+            const totalHours = schedule.TotalHours;
+            
+            // Extract job ID from reference
+            const jobId = jobRef.includes('-') ? jobRef.split('-')[0] : jobRef;
+            
+            return `
+                <div class="job-card" data-job-id="${jobId}" data-schedule-id="${schedule.ID}">
+                    <div class="job-header">
+                        <div class="job-number">Job #${jobRef}</div>
+                        <div class="job-status">Scheduled</div>
+                    </div>
+                    
+                    <div class="customer-name">Loading job details...</div>
+                    <div class="site-address">Fetching address...</div>
+                    
+                    <div class="job-time">
+                        <span>⏰ Scheduled: ${startTime} - ${endTime} (${totalHours}h)</span>
+                    </div>
+                    
+                    <div class="timer-controls">
+                        <button class="btn btn-start" onclick="startTimer('${jobId}')">▶️ Start</button>
+                        <button class="btn btn-stop" onclick="stopTimer('${jobId}')" disabled>⏹️ Stop</button>
+                        <button class="btn btn-notes" onclick="toggleNotes('${jobId}')">📝 Notes</button>
+                        <button class="btn btn-photo" onclick="togglePhoto('${jobId}')">📷 Photo</button>
+                    </div>
+                    
+                    <div class="time-display" id="timer-${jobId}">Ready to start</div>
+                    
+                    <div class="notes-area" id="notes-${jobId}">
+                        <textarea placeholder="Enter job notes..." id="notes-text-${jobId}"></textarea>
+                        <button class="btn btn-save" onclick="saveNotes('${jobId}')">Save Notes</button>
+                    </div>
+                    
+                    <div class="photo-upload" id="photo-${jobId}">
+                        <input type="file" accept="image/*" capture="environment" id="photo-input-${jobId}" multiple>
+                        <button class="btn btn-save" onclick="uploadPhotos('${jobId}')">Upload Photos</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Timer functions
+        function startTimer(jobId) {
+            const startBtn = document.querySelector(`[data-job-id="${jobId}"] .btn-start`);
+            const stopBtn = document.querySelector(`[data-job-id="${jobId}"] .btn-stop`);
+            const display = document.getElementById(`timer-${jobId}`);
+            
+            activeTimers[jobId] = {
+                startTime: Date.now(),
+                interval: setInterval(() => {
+                    const elapsed = Date.now() - activeTimers[jobId].startTime;
+                    const hours = Math.floor(elapsed / 3600000);
+                    const minutes = Math.floor((elapsed % 3600000) / 60000);
+                    const seconds = Math.floor((elapsed % 60000) / 1000);
+                    
+                    display.textContent = `⏱️ ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000)
+            };
+            
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            display.style.color = '#059669';
+        }
+
+        function stopTimer(jobId) {
+            if (!activeTimers[jobId]) return;
+            
+            const startBtn = document.querySelector(`[data-job-id="${jobId}"] .btn-start`);
+            const stopBtn = document.querySelector(`[data-job-id="${jobId}"] .btn-stop`);
+            const display = document.getElementById(`timer-${jobId}`);
+            
+            clearInterval(activeTimers[jobId].interval);
+            const elapsed = Date.now() - activeTimers[jobId].startTime;
+            const hours = (elapsed / 3600000).toFixed(2);
+            
+            // Here we would log the time to SimPro
+            logTimeToSimPro(jobId, hours);
+            
+            delete activeTimers[jobId];
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            display.textContent = `✅ Logged ${hours} hours`;
+            display.style.color = '#059669';
+        }
+
+        // Notes functions
+        function toggleNotes(jobId) {
+            const notesArea = document.getElementById(`notes-${jobId}`);
+            notesArea.classList.toggle('active');
+        }
+
+        function saveNotes(jobId) {
+            const notesText = document.getElementById(`notes-text-${jobId}`).value;
+            if (!notesText.trim()) {
+                showError('Please enter some notes');
+                return;
+            }
+            
+            // Here we would save notes to SimPro
+            saveNotesToSimPro(jobId, notesText);
+        }
+
+        // Photo functions
+        function togglePhoto(jobId) {
+            const photoArea = document.getElementById(`photo-${jobId}`);
+            photoArea.classList.toggle('active');
+        }
+
+        function uploadPhotos(jobId) {
+            const fileInput = document.getElementById(`photo-input-${jobId}`);
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                showError('Please select photos to upload');
+                return;
+            }
+            
+            // Here we would upload photos to SimPro
+            uploadPhotosToSimPro(jobId, files);
+        }
+
+        // SimPro API functions (simplified for demo)
+        async function logTimeToSimPro(jobId, hours) {
+            showSuccess(`Time logged: ${hours} hours`);
+            // TODO: Implement actual SimPro time logging
+        }
+
+        async function saveNotesToSimPro(jobId, notes) {
+            showSuccess('Notes saved successfully');
+            // TODO: Implement actual SimPro notes saving
+        }
+
+        async function uploadPhotosToSimPro(jobId, files) {
+            showSuccess(`${files.length} photos uploaded`);
+            // TODO: Implement actual SimPro photo upload
+        }
+
+        // Utility functions
+        function showLoading() {
+            document.getElementById('jobsContainer').innerHTML = '<div class="loading">Loading jobs...</div>';
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        // Initialize app
+        console.log('PE Mobile App loaded');
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PE Mobile - QR Codes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .qr-code {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        h1 { color: #2563eb; }
+        h3 { color: #1e40af; }
+        .note {
+            background: #e8f5e8;
+            border: 1px solid #4CAF50;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #2E7D32;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 PE Mobile App - QR Codes</h1>
+        
+        <div class="note">
+            <strong>Scan with your phone's camera to open the PE Mobile app!</strong>
+        </div>
+        
+        <h3>Option 1: 192.168.0.7</h3>
+        <div class="qr-code">
+            <canvas id="qr1"></canvas>
+            <br>192.168.0.7:8080/app.html
+        </div>
+        
+        <h3>Option 2: 192.168.1.7</h3>
+        <div class="qr-code">
+            <canvas id="qr2"></canvas>
+            <br>192.168.1.7:8080/app.html
+        </div>
+        
+        <h3>Option 3: 10.0.0.7</h3>
+        <div class="qr-code">
+            <canvas id="qr3"></canvas>
+            <br>10.0.0.7:8080/app.html
+        </div>
+        
+        <div class="note">
+            <strong>Instructions:</strong><br>
+            1. Point your phone's camera at a QR code<br>
+            2. Tap the notification that appears<br>
+            3. The PE Mobile app will open!
+        </div>
+    </div>
+
+    <script>
+        // Generate QR codes for each IP option
+        QRCode.toCanvas(document.getElementById('qr1'), 'http://192.168.0.7:8080/app.html', {width: 200});
+        QRCode.toCanvas(document.getElementById('qr2'), 'http://192.168.1.7:8080/app.html', {width: 200});
+        QRCode.toCanvas(document.getElementById('qr3'), 'http://10.0.0.7:8080/app.html', {width: 200});
+    </script>
+</body>
+</html>

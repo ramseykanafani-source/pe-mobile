@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PE Mobile - Job Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .tech-selector {
+            padding: 1rem;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tech-selector select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .jobs-container {
+            padding: 1rem;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid #2563eb;
+            position: relative;
+        }
+
+        .job-card.timer-active {
+            border-left-color: #059669;
+            background: #f0fdf4;
+        }
+
+        .job-card.completed {
+            border-left-color: #059669;
+            opacity: 0.9;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-number {
+            font-weight: bold;
+            color: #2563eb;
+            font-size: 1.1rem;
+        }
+
+        .job-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .job-status.active {
+            background: #d1fae5;
+            color: #065f46;
+            animation: pulse 2s infinite;
+        }
+
+        .job-status.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .site-address {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .time-display {
+            font-weight: bold;
+            color: #059669;
+            text-align: center;
+            padding: 0.75rem;
+            background: #f0fdf4;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .timer-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .btn-start {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-stop {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-notes {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-photo {
+            background: #ea580c;
+            color: white;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .notes-area, .photo-upload, .po-area {
+            margin-top: 1rem;
+            display: none;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .notes-area.active, .photo-upload.active, .po-area.active {
+            display: block;
+        }
+
+        .notes-area textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-save {
+            background: #059669;
+            color: white;
+            width: 100%;
+        }
+
+        .photo-upload input[type="file"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            background: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .no-jobs {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #2563eb;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PE Mobile - Job Tracker</h1>
+    </div>
+
+    <div class="user-info">
+        <div style="padding: 1rem; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-weight: bold; color: #2563eb;" id="userName">Loading...</div>
+                <div style="font-size: 0.9rem; color: #6b7280;" id="userRole">Technician</div>
+            </div>
+            <button onclick="logout()" style="background: #dc2626; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem;">Logout</button>
+        </div>
+    </div>
+
+    <div id="successMessage" class="success-message"></div>
+    <div id="errorMessage" class="error-message"></div>
+
+    <div class="jobs-container" id="jobsContainer">
+        <div class="loading">
+            Select a technician to view today's jobs
+        </div>
+    </div>
+
+    <script>
+        // Active timers storage
+        const activeTimers = {};
+        
+        // Current user info
+        let currentUser = null;
+
+        // Load jobs for selected technician (SECURE)
+        async function loadTechJobs(techId) {
+            showLoading('Loading jobs...');
+            
+            try {
+                const token = localStorage.getItem('pe_mobile_token');
+                if (!token) {
+                    throw new Error('No authentication token');
+                }
+
+                const response = await fetch(`/api/schedules/${techId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.status === 401 || response.status === 403) {
+                    // Token expired or invalid - redirect to login
+                    localStorage.removeItem('pe_mobile_token');
+                    localStorage.removeItem('pe_mobile_user');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Server error: ${response.status}`);
+                }
+                
+                const jobs = await response.json();
+                console.log('Loaded jobs:', jobs.length);
+                displayJobs(jobs, techId);
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                showError('Failed to load jobs: ' + error.message);
+            }
+        }
+
+        // Display jobs in the UI
+        function displayJobs(jobs, techId) {
+            const container = document.getElementById('jobsContainer');
+            
+            if (jobs.length === 0) {
+                container.innerHTML = '<div class="no-jobs">No jobs scheduled for today</div>';
+                return;
+            }
+
+            const jobsHTML = jobs.map(job => createJobCard(job, techId)).join('');
+            container.innerHTML = jobsHTML;
+        }
+
+        // Create job card HTML
+        function createJobCard(schedule, techId) {
+            const jobRef = schedule.Reference;
+            const startTime = schedule.Blocks[0].StartTime;
+            const endTime = schedule.Blocks[0].EndTime;
+            const totalHours = schedule.TotalHours;
+            
+            const jobId = jobRef.includes('-') ? jobRef.split('-')[0] : jobRef;
+            
+            const customer = schedule.jobDetails?.customer || 'Loading...';
+            const site = schedule.jobDetails?.site || 'Fetching address...';
+            const description = schedule.jobDetails?.description || '';
+            
+            return `
+                <div class="job-card" data-job-id="${jobId}" data-tech-id="${techId}">
+                    <div class="job-header">
+                        <div class="job-number">Job #${jobRef}</div>
+                        <div class="job-status">Scheduled</div>
+                    </div>
+                    
+                    <div class="customer-name">${customer}</div>
+                    <div class="site-address">${site}</div>
+                    ${description ? `<div class="site-address" style="font-style: italic; margin-top: 0.25rem;">${description.replace(/<[^>]*>/g, '').substring(0, 100)}...</div>` : ''}
+                    
+                    <div class="job-time">
+                        <span>⏰ Scheduled: ${startTime} - ${endTime} (${totalHours}h)</span>
+                    </div>
+                    
+                    <div class="time-display" id="timer-${jobId}">Ready to start</div>
+                    
+                    <div class="timer-controls">
+                        <button class="btn btn-start" onclick="startTimer('${jobId}')">▶️ Start</button>
+                        <button class="btn btn-stop" onclick="stopTimer('${jobId}')" disabled>⏹️ Stop</button>
+                        <button class="btn btn-notes" onclick="toggleNotes('${jobId}')">📝 Notes</button>
+                        <button class="btn btn-photo" onclick="togglePhoto('${jobId}')">📷 Photo</button>
+                    </div>
+                    
+                    <div class="po-controls" style="margin-top: 0.5rem;">
+                        <button class="btn btn-po" onclick="togglePO('${jobId}')" style="background: #f59e0b; color: white; width: 100%;">🛒 Create Purchase Order</button>
+                    </div>
+                    
+                    <div class="notes-area" id="notes-${jobId}">
+                        <textarea placeholder="Enter job notes..." id="notes-text-${jobId}"></textarea>
+                        <button class="btn btn-save" onclick="saveNotes('${jobId}')">Save Notes</button>
+                    </div>
+                    
+                    <div class="photo-upload" id="photo-${jobId}">
+                        <input type="file" accept="image/*" capture="environment" id="photo-input-${jobId}" multiple>
+                        <button class="btn btn-save" onclick="uploadPhotos('${jobId}')">Upload Photos</button>
+                    </div>
+                    
+                    <div class="po-area" id="po-${jobId}">
+                        <h4 style="margin-bottom: 0.5rem; color: #f59e0b;">📦 Purchase Order</h4>
+                        
+                        <select id="vendor-${jobId}" style="width: 100%; padding: 0.75rem; margin-bottom: 0.5rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                            <option value="">Select Supplier</option>
+                            <option value="32037">Haymans Electrical</option>
+                            <option value="135479">Rexel</option>
+                            <option value="163842">BLA Trade Supplies</option>
+                        </select>
+                        
+                        <input type="text" id="po-description-${jobId}" placeholder="PO Description (e.g., Cable & fittings for job ${jobId})" style="width: 100%; padding: 0.75rem; margin-bottom: 0.5rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <input type="text" id="po-item-${jobId}" placeholder="Item description">
+                            <input type="number" id="po-amount-${jobId}" placeholder="Amount" step="0.01">
+                        </div>
+                        
+                        <button class="btn btn-save" onclick="createPO('${jobId}')">Create Purchase Order</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Timer functions
+        function startTimer(jobId) {
+            const card = document.querySelector(`[data-job-id="${jobId}"]`);
+            const startBtn = card.querySelector('.btn-start');
+            const stopBtn = card.querySelector('.btn-stop');
+            const display = document.getElementById(`timer-${jobId}`);
+            const statusEl = card.querySelector('.job-status');
+            
+            activeTimers[jobId] = {
+                startTime: Date.now(),
+                interval: setInterval(() => {
+                    const elapsed = Date.now() - activeTimers[jobId].startTime;
+                    const hours = Math.floor(elapsed / 3600000);
+                    const minutes = Math.floor((elapsed % 3600000) / 60000);
+                    const seconds = Math.floor((elapsed % 60000) / 1000);
+                    
+                    display.textContent = `⏱️ ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} - Running`;
+                }, 1000)
+            };
+            
+            card.classList.add('timer-active');
+            statusEl.textContent = '⏱️ ACTIVE';
+            statusEl.classList.add('active');
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+        }
+
+        function stopTimer(jobId) {
+            if (!activeTimers[jobId]) return;
+            
+            const card = document.querySelector(`[data-job-id="${jobId}"]`);
+            const startBtn = card.querySelector('.btn-start');
+            const stopBtn = card.querySelector('.btn-stop');
+            const display = document.getElementById(`timer-${jobId}`);
+            const statusEl = card.querySelector('.job-status');
+            const techId = card.dataset.techId;
+            
+            clearInterval(activeTimers[jobId].interval);
+            const elapsed = Date.now() - activeTimers[jobId].startTime;
+            const hours = (elapsed / 3600000).toFixed(2);
+            
+            // Log time to SimPro
+            logTimeToSimPro(jobId, hours, techId);
+            
+            delete activeTimers[jobId];
+            card.classList.remove('timer-active');
+            card.classList.add('completed');
+            statusEl.textContent = '✅ Logged';
+            statusEl.classList.remove('active');
+            statusEl.classList.add('completed');
+            startBtn.disabled = true;
+            stopBtn.disabled = true;
+            display.textContent = `✅ Completed - ${hours} hours logged`;
+        }
+
+        // Notes, photo, and PO functions
+        function toggleNotes(jobId) {
+            const notesArea = document.getElementById(`notes-${jobId}`);
+            notesArea.classList.toggle('active');
+        }
+
+        function togglePhoto(jobId) {
+            const photoArea = document.getElementById(`photo-${jobId}`);
+            photoArea.classList.toggle('active');
+        }
+
+        function togglePO(jobId) {
+            const poArea = document.getElementById(`po-${jobId}`);
+            poArea.classList.toggle('active');
+        }
+
+        async function saveNotes(jobId) {
+            const notesText = document.getElementById(`notes-text-${jobId}`).value;
+            if (!notesText.trim()) {
+                showError('Please enter some notes');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/jobs/${jobId}/notes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ notes: notesText })
+                });
+                
+                if (response.ok) {
+                    showSuccess('Notes saved to SimPro! 📝');
+                    document.getElementById(`notes-text-${jobId}`).value = '';
+                    toggleNotes(jobId);
+                } else {
+                    throw new Error('Failed to save notes');
+                }
+            } catch (error) {
+                showError('Failed to save notes: ' + error.message);
+            }
+        }
+
+        async function uploadPhotos(jobId) {
+            const fileInput = document.getElementById(`photo-input-${jobId}`);
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                showError('Please select photos to upload');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/jobs/${jobId}/photos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ photoCount: files.length })
+                });
+                
+                if (response.ok) {
+                    showSuccess(`${files.length} photos uploaded to SimPro! 📷`);
+                    fileInput.value = '';
+                    togglePhoto(jobId);
+                } else {
+                    throw new Error('Failed to upload photos');
+                }
+            } catch (error) {
+                showError('Failed to upload photos: ' + error.message);
+            }
+        }
+
+        async function createPO(jobId) {
+            const vendorId = document.getElementById(`vendor-${jobId}`).value;
+            const description = document.getElementById(`po-description-${jobId}`).value;
+            const item = document.getElementById(`po-item-${jobId}`).value;
+            const amount = document.getElementById(`po-amount-${jobId}`).value;
+            
+            if (!vendorId) {
+                showError('Please select a supplier');
+                return;
+            }
+            
+            if (!description) {
+                showError('Please enter PO description');
+                return;
+            }
+            
+            if (!item || !amount) {
+                showError('Please enter item and amount');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/jobs/${jobId}/purchase-order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        vendorId,
+                        description,
+                        item,
+                        amount: parseFloat(amount)
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showSuccess(`Purchase Order #${result.poNumber} created! 🛒`);
+                    document.getElementById(`vendor-${jobId}`).value = '';
+                    document.getElementById(`po-description-${jobId}`).value = '';
+                    document.getElementById(`po-item-${jobId}`).value = '';
+                    document.getElementById(`po-amount-${jobId}`).value = '';
+                    togglePO(jobId);
+                } else {
+                    throw new Error(result.error || 'Failed to create PO');
+                }
+            } catch (error) {
+                showError('Failed to create PO: ' + error.message);
+            }
+        }
+
+        // SimPro API functions (SECURE)
+        async function logTimeToSimPro(jobId, hours, techId) {
+            try {
+                const token = localStorage.getItem('pe_mobile_token');
+                const response = await fetch(`/api/jobs/${jobId}/time`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ 
+                        hours: parseFloat(hours), 
+                        notes: 'Time logged via PE Mobile App'
+                    })
+                });
+                
+                if (response.status === 401 || response.status === 403) {
+                    logout();
+                    return;
+                }
+                
+                if (response.ok) {
+                    showSuccess(`Time logged: ${hours} hours ⏱️`);
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to log time');
+                }
+            } catch (error) {
+                showError('Failed to log time: ' + error.message);
+            }
+        }
+
+        // Utility functions
+        function showLoading(message = 'Loading...') {
+            document.getElementById('jobsContainer').innerHTML = `<div class="loading">${message}</div>`;
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        // Check authentication and load user data (SECURE)
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('pe_mobile_token');
+            const userInfo = localStorage.getItem('pe_mobile_user');
+            
+            if (!token || !userInfo) {
+                // Not logged in - redirect to login
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(userInfo);
+                
+                // Update UI with user info
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userRole').textContent = `${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)} Team`;
+                
+                // Load jobs for current user only
+                loadTechJobs(currentUser.techId);
+                
+            } catch (error) {
+                console.error('Invalid user session:', error);
+                logout();
+            }
+        });
+        
+        // Logout function (SECURE)
+        function logout() {
+            localStorage.removeItem('pe_mobile_token');
+            localStorage.removeItem('pe_mobile_user');
+            window.location.href = '/login.html';
+        }
+        
+        // Session timeout check (24 hours)
+        function checkSession() {
+            if (currentUser) {
+                const loginTime = new Date(currentUser.loginTime);
+                const now = new Date();
+                const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+                
+                if (hoursDiff > 24) {
+                    alert('Session expired. Please log in again.');
+                    logout();
+                }
+            }
+        }
+        
+        // Check session every hour
+        setInterval(checkSession, 60 * 60 * 1000);
+    </script>
+</body>
+</html>
